@@ -1,27 +1,37 @@
 package auth
 
-// Camera information from VDC servers
-// swagger:response cameraResponse
-type cameraResponse struct {
-	// in: body
-	Body Camera
+type Role struct {
+	Id   int
+	Name string
 }
 
-// Serial number of IP camera
-// swagger:parameters uidbysn
-type serialNumber struct {
-	// in: query
-	// required: true
-	SerialNumber string `json:"serial_number"`
+// User model
+type User struct {
+	Id                 int    `json:"id" db:"id"`
+	Firstname          string `json:"firstname" db:"firstname"`
+	Lastname           string `json:"lastname" db:"lastname"`
+	Email              string `json:"email" db:"email"`
+	Role               string `json:"role" db:"role"`
+	Password           string `json:"-" db:"password"`
+	CreatedAt          string `json:"created_at" db:"created_at"`
+	LastLogin          string `json:"last_login" db:"last_login"`
+	LastPasswordChange string `json:"last_password_change" db:"last_password_change"`
+	IsActive           bool   `json:"is_active" db:"is_active"`
 }
 
-type Camera struct {
-	// Camera ID
-	ID string `json:"id"`
-	// Camera UID
-	Uid string `json:"uid"`
-	// State of camera
-	State string `json:"state"`
-	// Сerver to which the camera is connected
-	Server string `json:"server"`
+type CreateUser struct {
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Email     string `json:"email"`
+	Role      string `json:"-"`
+	Password  string `json:"password"`
+}
+
+type SignInInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type JWTResponse struct {
+	Token string `json:"token"`
 }

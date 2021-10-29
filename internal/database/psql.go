@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,6 +19,7 @@ type Database struct {
 }
 
 func New(db *Database) (*sqlx.DB, error) {
+	fmt.Println(db)
 	database, err := sqlx.Open("postgres", fmt.Sprintf(
 		"host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		db.Host, db.Port, db.User, db.DBName, db.Password, db.SSLMode))
@@ -27,7 +29,7 @@ func New(db *Database) (*sqlx.DB, error) {
 	}
 	err = database.Ping()
 	if err != nil {
-		db.Logger.Fatalf("Can't ping database")
+		db.Logger.Fatalf("Can't ping database" + err.Error())
 		return nil, err
 	}
 	db.Logger.Infof("Connection to database %s is successul", db.Host)

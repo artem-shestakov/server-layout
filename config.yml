@@ -1,0 +1,12 @@
+---
+database:
+  host: "127.0.0.1"
+  port: 5432
+  user: api
+  password: api
+  dbname: api
+  sslmode: disable
+authorization:
+  password_salt: your_secret_salt
+  jwt_key: your_secret_jwt_key
+  jwt_ttl: 8

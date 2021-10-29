@@ -83,7 +83,11 @@ func main() {
 	docsHandler.Register(router)
 	// Auth
 	authStorage := auth.NewStorage(db)
-	authService := auth.NewAuthService(authStorage)
+	authService := auth.NewAuthService(authStorage, &auth.AuthConfig{
+		PasswordSalt: conf.Authorization.PasswordSalt,
+		JWTKey:       conf.Authorization.JWTKey,
+		JWTTTL:       conf.Authorization.JWTTTL,
+	})
 	vdcHandler := auth.NewHandler(*authService)
 	vdcHandler.Register(apiRouter)
 
@@ -93,6 +97,7 @@ func main() {
 
 	// waiting for interrupt signal
 	<-stop
+	db.Close()
 	// Stop server with timeout
 	apiServer.Stop(ctx)
 }

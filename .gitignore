@@ -1,5 +1,8 @@
+# Secrets
+.env
 # Docs files
 docs
 
 # Other
 .DS_Store
+.vscode
