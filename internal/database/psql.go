@@ -19,7 +19,7 @@ type Database struct {
 }
 
 func New(db *Database) (*sqlx.DB, error) {
-	fmt.Println(db)
+	db.Logger.SetFormatter(&logrus.JSONFormatter{})
 	database, err := sqlx.Open("postgres", fmt.Sprintf(
 		"host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		db.Host, db.Port, db.User, db.DBName, db.Password, db.SSLMode))
@@ -32,6 +32,6 @@ func New(db *Database) (*sqlx.DB, error) {
 		db.Logger.Fatalf("Can't ping database" + err.Error())
 		return nil, err
 	}
-	db.Logger.Infof("Connection to database %s is successul", db.Host)
+	db.Logger.Infof("Connection to database %s:%s is successul", db.Host, db.Port)
 	return database, nil
 }
