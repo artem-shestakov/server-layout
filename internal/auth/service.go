@@ -68,6 +68,26 @@ func (s *AuthService) GenerateJWT(email, password string) (string, error) {
 	return JWTToken.SignedString([]byte(s.config.JWTKey))
 }
 
+func (s *AuthService) ParseToken(accessToken string) (int, error) {
+	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", t.Header["alg"])
+		}
+		return []byte(s.config.JWTKey), nil
+	})
+	if err != nil {
+		return 0, apperror.NewError(err, http.StatusInternalServerError, "Internal error", err.Error())
+	}
+	if !token.Valid {
+		return 0, apperror.NewError(nil, http.StatusUnauthorized, "Token is not valid", "")
+	}
+	if claims, ok := token.Claims.(*tokenClaims); !ok {
+		return 0, apperror.NewError(nil, http.StatusInternalServerError, "Internal error", "Token claims are not of type \"tokenClaims\"")
+	} else {
+		return claims.UserId, nil
+	}
+}
+
 func (s *AuthService) hashPassword(password string) (string, error) {
 	hash := sha1.New()
 	_, err := hash.Write([]byte(password))
